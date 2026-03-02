@@ -1,36 +1,47 @@
+import { Render } from "../render/Render.js";
 
 export class Auth {
+
     static veterinarians = [];
     static currentVet = null;
-    
-    // Constructor privado: previene instanciación
+
     constructor() {
         throw new Error("Auth es una clase abstracta. No se puede instanciar.");
     }
+    static processLogin(username, password) {
+        const veterinarian = Auth.veterinarians.find(
+            (vet) => vet.verifyCredentials(username, password)
+        );
 
+        if (veterinarian) {
+            Auth.currentVet = veterinarian;
 
-    static login(username, password) {
-        const vet = this.veterinarians.find(v =>
-            v.verifyCredentials(username, password)
-        )
-
-        if (!vet) {
-            throw new Error('Usuario o contraseña incorrectos')
+            Render.showDashboard(Auth.currentVet);
+            Render.renderPatients(Auth.currentVet);
+            return Auth.currentVet;
         }
 
-        this.currentVet = vet
-        return vet
+        return null;
     }
 
     static logout() {
         Auth.currentVet = null;
+        Render.showLogin();
     }
 
     static register(newVet) {
-       this.veterinarians.push(newVet)
+        const exists = Auth.veterinarians.some(
+            (vet) => vet.id === newVet.id
+        );
+
+        if (exists) {
+            throw new Error("El veterinario ya está registrado en el sistema.");
+        }
+
+        Auth.veterinarians.push(newVet);
     }
 
     static getVeterinarians() {
-        return this.veterinarians;
+        return Auth.veterinarians;
     }
 }

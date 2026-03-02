@@ -1,94 +1,117 @@
+"use strict";
+
 import { Veterinarian } from "./models/Veterinarian.js";
 import { Tutor } from "./models/Tutor.js";
 import { Pet } from "./models/Pet.js";
+
 import { Auth } from "./utils/Auth.js";
+import { Validator } from "./utils/Validator.js";
 
-console.log("%c--- INICIO DE PRUEBAS DE SISTEMA ---", "color: blue; font-weight: bold; font-size: 14px;");
+import { showMessage, clearFields, generateId } from "./utils/helpers.js";
 
-// 1. PRUEBAS DE AUTH Y VETERINARIAN
-console.group("1. Pruebas de Auth y Veterinarian");
+import { Render } from "./render/Render.js";
+
+// Instancia Dr. Carlos Pérez
 const vet1 = new Veterinarian({
-    id: 1,
-    fullName: "Dr. Pérez",
-    age: 45,
+    id: "VET-001",
+    fullName: "Dr. Carlos Pérez",
+    age: 35,
     username: "drperez",
     password: "vet123"
 });
 
+// Instancia Dra. María Gómez
 const vet2 = new Veterinarian({
-    id: 2,
-    fullName: "Dra. Gómez",
-    age: 38,
+    id: "VET-002",
+    fullName: "Dra. María Gómez",
+    age: 42,
     username: "dragomez",
     password: "vet456"
 });
 
 Auth.register(vet1);
 Auth.register(vet2);
-console.log("Veterinarios registrados:", Auth.getVeterinarians());
 
-try {
-    console.log("Intentando login exitoso...");
-    const loggedVet = Auth.login("drperez", "vet123");
-    console.log("Login exitoso:", loggedVet.getDisplayInfo());
-    console.log("Veterinario actual:", Auth.currentVet.fullName);
+document.getElementById("btnLogin").addEventListener("click", () => {
+    const username = document.getElementById("loginUser").value.trim();
+    const password = document.getElementById("loginPass").value.trim();
+    const messageContainer = document.getElementById("loginMessage");
 
-    console.log("Intentando login fallido...");
-    // Auth.login("user", "wrong"); // Esto lanzaría error y detendría el script si no se captura
-} catch (error) {
-    console.error("Error esperado en login:", error.message);
-}
+    if (!username || !password) {
+        showMessage(messageContainer, "Por favor, completa todos los campos.", "error");
+        return;
+    }
 
-Auth.logout();
-console.log("Post-logout, veterinario actual:", Auth.currentVet);
-console.groupEnd();
+    const result = Auth.processLogin(username, password);
 
-
-// 2. PRUEBAS DE TUTOR
-console.group("2. Pruebas de Tutor");
-const tutor1 = new Tutor({
-    id: 101,
-    fullName: "Juan Dueño",
-    age: 30,
-    phone: "+56912345678",
-    email: "juan@example.com"
+    if (!result) {
+        showMessage(
+            messageContainer,
+            "Usuario o contraseña incorrectos. Intenta de nuevo.",
+            "error"
+        );
+    }
 });
 
-console.log("Datos del tutor:", tutor1.getSummary());
-console.log("Info de pantalla (Herencia Person):", tutor1.getDisplayInfo());
-console.groupEnd();
-
-
-// 3. PRUEBAS DE PET
-console.group("3. Pruebas de Pet");
-const miMascota = new Pet({
-    name: "Firulais",
-    species: "Perro",
-    breed: "Quiltro",
-    birthdate: "2020-05-20",
-    tutor: tutor1,
-    initialNote: "Consulta inicial por control de vacunas."
+document.getElementById("loginPass").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("btnLogin").click();
 });
 
-console.log("Mascota creada:", miMascota.getSummary());
-console.log("ID generado:", miMascota.id);
+document.getElementById("loginUser").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("loginPass").focus();
+});
 
-console.log("Agregando entrada médica...");
-miMascota.addMedicalEntry("Se observa buen estado general. Se recomienda desparasitación.");
+document.getElementById("formRegisterPet").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const messageContainer = document.getElementById("registerMessage");
 
-console.log("Última entrada:", miMascota.getLatestEntry());
-console.log("Historial completo:", miMascota.medicalEvolution);
-console.groupEnd();
+    try {
+        const petName = Validator.name(formData.get("petName"), "Ingresa un nombre válido para la mascota.");
+        const species = Validator.notEmpty(formData.get("petSpecies"), "Especie");
+        const breed = Validator.notEmpty(formData.get("petBreed"), "Raza");
+        const birthdate = Validator.date(formData.get("petBirthdate"), "Ingresa una fecha de nacimiento válida.");
+        const tutorName = Validator.name(formData.get("tutorName"), "Ingresa un nombre válido para el tutor.");
+        const tutorPhone = Validator.phone(formData.get("tutorPhone"), "El teléfono no es válido.");
+        const tutorEmail = Validator.email(formData.get("tutorEmail"), "El correo no es válido.");
+        const evolution = Validator.notEmpty(formData.get("petEvolution"), "Evolución médica");
 
+        const tutor = new Tutor({
+            id: generateId("TUT"),
+            fullName: tutorName,
+            age: 0,
+            phone: tutorPhone,
+            email: tutorEmail
+        });
 
-// 4. PRUEBAS DE INTEGRACIÓN (VET + PATIENTS)
-console.group("4. Pruebas de Integración (Vet + Patients)");
-const vetActivo = Auth.login("dragomez", "vet456");
-console.log("Vet activo:", vetActivo.fullName);
+        const newPet = new Pet({
+            name: petName,
+            species,
+            breed,
+            birthdate,
+            tutor,
+            initialNote: evolution
+        });
 
-vetActivo.addPatient(miMascota);
-console.log("Total pacientes:", vetActivo.totalPatients());
-console.log("Lista de pacientes:", vetActivo.getPatients());
-console.groupEnd();
+        Auth.currentVet.addPatient(newPet);
 
-console.log("%c--- FIN DE PRUEBAS ---", "color: green; font-weight: bold; font-size: 14px;");
+        showMessage(
+            messageContainer,
+            `¡${petName} fue registrado/a exitosamente!`,
+            "success"
+        );
+
+        form.reset();
+
+        Render.renderPatients(Auth.currentVet);
+        Render.updateStats(Auth.currentVet);
+
+    } catch (error) {
+        showMessage(messageContainer, error.message, "error");
+    }
+});
+
+document.getElementById("btnLogout").addEventListener("click", () => {
+    Auth.logout();
+});

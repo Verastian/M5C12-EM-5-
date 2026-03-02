@@ -1,4 +1,4 @@
-/* ── Variables CSS personalizadas ──*/
+/* Variables CSS personalizadas*/
 :root {
     --color-primary: #0d7377;
     --color-primary-dark: #095456;
@@ -16,7 +16,7 @@
     color: var(--color-primary) !important;
 }
 
-/* ── Botón  */
+/* Botón  */
 .btn-primary-custom {
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
     border: none;
@@ -134,7 +134,7 @@
     display: none !important;
 }
 
-/* ── Animaciones ── */
+/* Animaciones */
 @keyframes fadeInUp {
     from {
         opacity: 0;
