@@ -1,0 +1,163 @@
+/* ── Variables CSS personalizadas ──*/
+:root {
+    --color-primary: #0d7377;
+    --color-primary-dark: #095456;
+    --color-primary-light: #14a3a8;
+    --color-accent: #ff6b35;
+}
+
+/* Navbar  */
+.bg-primary-custom {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important;
+}
+
+/* Texto */
+.text-primary-custom {
+    color: var(--color-primary) !important;
+}
+
+/* ── Botón  */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(13, 115, 119, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 115, 119, 0.4);
+}
+
+.btn-primary-custom:active {
+    transform: translateY(0);
+}
+
+/* Botón de acento */
+.btn-accent-custom {
+    background: var(--color-accent);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-accent-custom:hover {
+    background: #e55a2b;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+.form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 115, 119, 0.15);
+}
+
+/* Caja de credenciales */
+.credentials-box {
+    background: #f0f9f8;
+}
+
+.credentials-box code {
+    background: #e0ebe8;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--color-primary-dark);
+}
+
+/* Tarjetas estadísticas */
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(13, 115, 119, 0.15) !important;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1.2;
+}
+
+/*Tarjetas de pacientes */
+.patient-item {
+    background: #f8fafa;
+    border: 1px solid #e0ebe8;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.4s ease;
+}
+
+.patient-item:hover {
+    background: #eef5f3;
+    border-color: var(--color-primary-light);
+    transform: translateX(4px);
+}
+
+/* Avatar */
+.patient-avatar {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Evolución médica */
+.evolution-box {
+    background: #fff;
+    border-left: 3px solid var(--color-primary);
+    border-radius: 6px;
+}
+
+/* Badge de número de pacient*/
+.badge-patient {
+    background: #e0ebe8;
+    color: var(--color-primary-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* ocultar elementos */
+.hidden {
+    display: none !important;
+}
+
+/* ── Animaciones ── */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*Alertas personalizadas*/
+.alert-animated {
+    animation: slideIn 0.3s ease;
+}
