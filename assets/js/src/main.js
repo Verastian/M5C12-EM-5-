@@ -34,7 +34,7 @@ try {
     console.log("Veterinario actual:", Auth.currentVet.fullName);
 
     console.log("Intentando login fallido...");
-    // Auth.login("user", "wrong"); // Esto lanzaría error y detendría el script si no se captura
+
 } catch (error) {
     console.error("Error esperado en login:", error.message);
 }
